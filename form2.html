@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="formBlock2">
+        <h2>User Info</h2>
+        <div class="link">
+            <h2 id="hello"></h2>
+            <a href="#" class="exit-link" id="exitLink">exit</a>
+        </div>
+        <form id="dataReg2">
+            <div id="part2">
+                <label for="name">First Name:<input type="text" id="name" name="name" required /></label><br />
+                <div id="name-error" class="error-message"></div><br />
+                <label for="surname">Last Name:<input type="text" id="surname" name="surname" required /></label><br />
+                <span class="error-message" id="surname-error"></span><br />
+                <label for="year">Year of birth:<input type="text" id="year" name="year" required /></label><br />
+                <span class="error-message" id="year-error"></span><br />
+            <label for="Gender">Gender:<select id="gender" name="gender" required>
+                <option value="" selected>---Make your choice---</option>
+                <option value="Man">Man</option>
+                <option value="Woman">Woman</option>
+            </select></label><br />
+                <span class="error-message" id="gender-error">Make your choice</span><br />
+                <label for="tel">Phone number:<input type="text" id="tel" name="tel" placeholder="(0XX)XX-XXX-XX"/></label><br />
+                <span class="error-message" id="tel-error">Wrong format</span><br />
+                <label for="skype">Skype:<input type="text" id="skype" name="skype" /></label><br />
+                <span class="error-message" id="skype-error">Wrong format</span><br />
+            </div>
+            <div id="btn">
+                <input type="submit" class="btn1" style="font-size:18px" value="SAVE" />
+            </div>
+        </form>
+    </div>
+    <script>
+        // Получаем данные из localStorage
+        const email = localStorage.getItem("email");
+
+        // Проверяем, есть ли данные
+        if (email) {
+            document.getElementById("hello").textContent = `Hello, ${email}`;
+        } else {
+            // Если данных нет, перенаправляем на стр1
+            window.location.href = 'form1.html';
+        }
+
+        //  Exit
+        document.getElementById("exitLink").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            localStorage.clear();
+
+            window.location.href = 'form1.html';
+        });
+
+
+        function validateForm(formData) {
+            let valid = true;
+            const form = document.getElementById('dataReg2');
+            const name = formData.get('name');
+            const nameError = document.getElementById('name-error');
+            // Проверка, что длина не превышает 20 символов
+            if (name.length > 20) {
+                nameError.textContent = 'Must be less then 20 letters';
+                nameError.style.display = 'block';
+                valid = false;
+            } else {
+                nameError.style.display = 'none';
+            }
+            // Проверка, что содержатся только буквенные символы
+            const nameRegex = /^[A-Za-zА-Яа-яЁё]+$/;
+            if (!nameRegex.test(name)) {
+                nameError.textContent = 'Must contain letters only';
+                nameError.style.display = 'block';
+                valid = false;
+            } else {
+                nameError.style.display = 'none';
+            }
+
+            const surname = formData.get('surname');
+            const surnameError = document.getElementById('surname-error');
+            // Проверка, что длина не превышает 20 символов
+            if (surname.length > 20) {
+                surnameError.textContent = 'Must be less then 20 letters';
+                surnameError.style.display = 'block';
+                valid = false;
+            } else {
+                surnameError.style.display = 'none';
+            }
+            // Проверка, что содержатся только буквенные символы
+            const surnameRegex = /^[A-Za-zА-Яа-яЁё]+$/;
+            if (!surnameRegex.test(surname)) {
+                surnameError.textContent = 'Must contain letters only';
+                surnameError.style.display = 'block';
+                valid = false;
+            } else {
+                surnameError.style.display = 'none';
+            }
+            const year = formData.get('year');
+            const yearError = document.getElementById('year-error');
+
+            // Проверка диапазона года от 1900 до текущего
+            const currentYear = new Date().getFullYear();
+            const yearRegex = /^(19[0-9]{2}|200[0-9]|201[0-9]|202[0-4])$/;
+
+            if (!yearRegex.test(year) || year < 1900 || year > currentYear) {
+                yearError.textContent = 'Year must be from 1900 to current';
+                yearError.style.display = 'block';
+                return false;
+            } else {
+                yearError.style.display = 'none';
+            }
+
+
+            const tel = formData.get('tel');
+            const telError = document.getElementById('tel-error');
+            const telRegex = /^\(\d{3}\)\d{2}-\d{3}-\d{2}$/;
+
+            if (!telRegex.test(tel)) {
+                telError.textContent = 'Wrong format';
+                telError.style.display = 'block';
+                return false;
+            } else {
+                telError.style.display = 'none';
+            }
+
+              const skype = formData.get('skype');
+            const skypeError = document.getElementById('skype-error');
+            const skypeRegex = /^[a-zA-Z0-9.-]*$/;
+            if (!skypeRegex.test(skype)) {
+                skypeError.textContent = 'Wrong format';
+                skypeError.style.display = 'block';
+                return false;
+            } else {
+                skypeError.style.display = 'none';
+            }
+
+            return valid;
+        }
+
+        function btnClick(formData) {
+            const form = document.getElementById('dataReg2');
+
+            if (!form || !formData) {
+                console.error('null');
+                return;
+            }
+
+            if (validateForm(formData)) {
+
+                if (form.name.value.length == 0 || form.surname.value.length == 0 ||
+                    form.year.value.length == 0 || form.gender.value.length == 0) {
+                    alert("Not all fields are filled in!");
+                    return;
+                }
+                localStorage.setItem("name", form.name.value);
+                localStorage.setItem("surname", form.surname.value);
+                localStorage.setItem("year", form.year.value);
+                localStorage.setItem("gender", form.gender.value);
+                localStorage.setItem("tel", form.tel.value);
+                localStorage.setItem("skype", form.skype.value);
+                alert("Data saved successfully!");
+                window.location.href = 'form2.html';
+            }
+        }
+        function docLoad() {
+            let name = localStorage.getItem("name");
+            let surname = localStorage.getItem("surname");
+            let year = localStorage.getItem("year");
+            let gender = localStorage.getItem("gender");
+            let tel = localStorage.getItem("tel");
+            let skype = localStorage.getItem("skype");
+           
+            // Заполняем поля формы, если данные есть
+            if (name) {
+                document.getElementById('name').value = name;
+            }
+            if (surname) {
+                document.getElementById('surname').value = surname;
+            }
+            if (year) {
+                document.getElementById('year').value = year;
+            }
+             if (gender) {
+                document.getElementById('gender').value = gender;
+            }
+             if (tel) {
+                document.getElementById('tel').value = tel;
+            }
+             if (skype) {
+                document.getElementById('skype').value = skype;
+            }
+            document.getElementById("part2").style.display = "block";
+        }
+        document.getElementById('dataReg2').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target); // новый обьект formData собирает все данные из формы
+            btnClick(formData);
+        });
+
+        document.addEventListener('DOMContentLoaded', docLoad);
+
+
+
+    </script>
+
+
+</body>
+
+</html>

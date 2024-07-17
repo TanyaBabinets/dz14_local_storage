@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="formBlock">
+        <h2>Регистрация</h2>
+        <form id="dataReg">
+            <div id="part1">
+                <label for="email">E-mail<input type="text" id="email" name="email" required /></label><br />
+                <div id="email-error" class="error-message"></div><br />
+                <label for="pass">Пароль<input type="password" id="pass" name="pass"
+                        placeholder="6-10 letters including capital letter" required /></label><br />
+                <span class="error-message" id="pass-error"></span><br />
+                <label for="passC">Подтверждение<input type="password" id="passC" name="passC" required /></label><br />
+                <span class="error-message" id="passC-error"></span><br />
+            </div>
+            <div id="btn">
+                <input type="submit" class="btn1" style="font-size:18px" value="SIGN UP" />
+            </div>
+        </form>
+</body>
+<script>
+    function validateForm(formData) {
+        let valid = true;
+        const email = formData.get('email');
+        const emailError = document.getElementById('email-error');
+        const emailRegex = /^[^\u0400-\u04FF\s@]+@[^\s@]+\.[^\s@]+$/; // исключаю кириллицу и нужно @ 
+
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'email must be like ttt@ttt.com';
+            emailError.style.display = 'block';
+            valid = false;
+        } else {
+            emailError.style.display = 'none';
+        }
+        //password
+        const pass = formData.get('pass');
+        const passC = formData.get('passC');
+        const passErr = document.getElementById('pass-error');
+        const passRegEx = /^(?=.*[A-Z])(?=.*[a-zA-Z]).{6,10}$/;
+        const passCErr = document.getElementById('passC-error');
+
+        if (!passRegEx.test(pass)) {
+            passErr.textContent = "must be 6-10 letters including capital letter";
+            passErr.style.display = 'block';
+            valid = false;
+        } else {
+            passErr.style.display = 'none';
+        }
+
+        if (pass !== passC) {
+            passCErr.textContent = "Password does not match";
+            passCErr.style.display = 'block';
+            valid = false;
+        } else {
+            passCErr.style.display = 'none';
+        }
+        return valid;
+    }
+
+    function btnClick(formData) {
+        const form = document.getElementById('dataReg');
+
+        if (!form || !formData) {
+            console.error('null');
+            return;
+        }
+
+        if (validateForm(formData)) {
+
+            if (form.email.value.length == 0 || form.pass.value.length == 0 ||
+                form.passC.value.length == 0) {
+                alert("Not all fields are filled in!");
+                return;
+            }
+            localStorage.setItem("email", form.email.value);
+            localStorage.setItem("pass", form.pass.value);
+            localStorage.setItem("passC", form.passC.value);
+
+            alert("Data saved successfully!");
+            window.location.href = 'form2.html';
+        }
+    }
+    function docLoad() {
+        let email = localStorage.getItem("email");
+        let pass = localStorage.getItem("pass");
+        let passC = localStorage.getItem("passC");
+        const part1 = document.getElementById("part1");
+
+        // Заполняем поля формы, если данные есть
+        if (email) {
+            document.getElementById('email').value = email;
+        }
+        if (pass) {
+            document.getElementById('pass').value = pass;
+        }
+        if (passC) {
+            document.getElementById('passC').value = passC;
+        }
+        document.getElementById("part1").style.display = "block";
+        if (email && pass && passC) {
+            window.location.href = 'form2.html';
+        }
+    }
+    document.getElementById('dataReg').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target); // новый обьект formData собирает все данные из формы
+        btnClick(formData);
+
+
+    });
+
+    document.addEventListener('DOMContentLoaded', docLoad);
+
+
+</script>
+
+</html>
